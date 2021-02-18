@@ -1,0 +1,43 @@
+
+alors pour les wavelets:
+
+* tu enregistres les fonctions que je t'ai envoyées (surtout:
+b_wavelet_lin et wave_bases)
+
+* tu loades ta seconde de data que tu veux (appelons-la "data")
+
+* tu copie/paste ça:
+
+dt = 1./sr;
+nd = length(data);
+s0 = 0.002; % c'est la période de la plus petite wavelette (2 ms, pour
+faire du 500 Hz max)
+dj = 0.0001; % ça va déterminer la résolution des wavelets en fréquence
+pad = 1; % ça on en parlera plus tard on s'en fout
+mis = 81; % c'est le nombre de wavelets coefficients qui
+t'intéressent. avec 81 tu descends jusqu'à 100 Hz (sinon il te descend
+jusqu'à une période de 2s, soit 0.5 Hz, et surtout avec une
+%résolution fine comme ça laisse tomber les dégâts en temps de
+computation). pour savoir comment changer ce nombre à ton gré sans
+tâtonner, cf en dessous.
+
+
+[wave,period,scale,coi] = b_wavelet_lin(data,dt,pad,dj,s0,-1,-1,-1,mis);
+freq = 1./scale(1:mis);
+power = abs(wave) .* abs(wave);
+time = (1:nd) ./ sr;
+pcolor(time,freq,power)
+shading 'interp'
+
+Tadaaaa !!!
+
+
+Donc, si tu veux par exemple aller que jusqu'à 400 Hz, tu joues sur s0 = 0.0025;
+Si tu veux descendre que jusqu'à  200 Hz, pour trouver le "mis" qu'il
+te faut: ouvre la variable "scale" qui a été créée par le programme de
+wavelet. Elle contient les périodes des wavelets. La premiere est s0,
+puis tu repère l'indice de la période max qui t'intéresse (en
+l'occurrence pour 200 Hz = 0.005 ms, donc mis=31);
+Si tu veux une meilleure résolution en fréquence tu diminues le "dj".
+
+voilà !

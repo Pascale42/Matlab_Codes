@@ -1,0 +1,54 @@
+So the wavelet scripts. There are three:
+
+b_wavelet_new3: calculates wavelet based on non-linear scale (it's the
+default). However, scales are distributed unevenly along the frequency
+axis so the calculation of basic measures (like sum power or average
+power in a band) is not straightforward.
+
+b_wavelet_lin: the same as above but the scale is linear. This is
+better for calculating with the scales e.g. averaging power or
+determining sum power in a frequency band.
+
+wavelet_bases: the above functions call this function which defines
+the so called mother wavelets = the wavelets used for the transform.
+Three wavelets are in the code (Paul, Dog, Morlet) but we use only the
+"Morlet", it matches the shape of LFP patterns well.
+
+All of these scripts are based on those written by Christopher
+Torrence and Gilbert Compo, see the attached paper.
+
+When writing a script (function) you have to define some parameters
+for the calculation of the scale vector (for a definition also see the
+help of the above functions):
+sr % sampling rate;
+dt = 1./sr;
+nd = length(data);
+s0 = 2 * dt; % smallest scale (=corresponds to the Nyqist frequency);
+dj = 0.01; % resolution of wavelet = inter-scale distance, you have to
+try to find the best both computationally and analytically;
+pad = 1; %we've never touched this;
+J1=ceil((log(nd*dt/s0)/log(2))/dj); %calculates maximal scale
+j=(0:J1); % the vector used for defining the scale;
+
+if using non-linear wavelet, scales are determined by:
+
+s=s0.*2.^(j*dj);
+
+omega0=6; parameter for the calculation of the width of a wavelet;
+
+calculation of frequency from scale:
+
+c=4*pi/(omega0+sqrt(2+omega0^2));
+fperiod=c.*s;
+f=1./fperiod;
+
+if you aim to use the linear scale:
+
+smax = 2; % minimal scale
+scale = s0:dj:smax; % linear wavelet scale
+J1 = size(scale,2)-1; % length of scale vector
+
+From the output "wave" is what you need. It's a complex array.
+Amplitude of the ith frequency component at jth time is
+abs(wave(i,j)), power is the square of it and instantaneous phase is
+"angle(wave(i,j))".
