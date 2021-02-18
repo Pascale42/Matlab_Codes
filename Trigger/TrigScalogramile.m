@@ -1,0 +1,62 @@
+% function [Spec, f, t] = TrigScalogramFile(FileBase, Trigger, Channels, Window,FreqRange, ResampleCoef)
+% Window, SpecWindow and SpecStep are in msec
+% Trigger in sampling rate of the file
+function [spec, f, t] = TrigScalogramFile(FileBase, Trigger,varargin)
+
+Par =LoadPar(FileBase);
+[Channels, Window, FreqRange, Rs] = DefaultArgs(varargin,...
+{[1:16],  1000,   [1 100], 1});
+if ResampleCoef >1 
+    Trigger = round(Trigger/ResampleCoef);
+end
+eFs =1250;
+Fs = (eFs/Rs);
+nSamples = round(Fs*Window/1000);
+nChannels = length(Channels);
+nTriggers = length(Trigger);
+StartPoints = Trigger-round(nSamples/2);
+segs = LoadSegs([FileBase '.eeg'], StartPoints,nSamples,Par.nChannels,Channels,eFs,ResampleCoef,1); 
+[f,s,p] = WaveletSampling(Fs,FreqRange);
+Scal=zeros(nSamples,length(f));
+for i=1:nTriggers
+    [sc t f]=Scalogram(sq(segs(:,:,i),FreqRange,Fs)); 
+    Scal = Scal +sc;
+end
+    
+    
+
+return
+SpecWindowSmpls = [SpecWin SpecStep]/1000;
+spec = [];
+for ii=1:nChannels
+    mysegs = sq(segs(:,ii,:));
+    sz = size(mysegs);
+    if Whiten>0
+        if ii==1
+            [mysegs AR] = WhitenSignal(reshape(mysegs,[],1),[],1);
+            mysegs = reshape(mysegs,sz);
+        else
+            mysegs = WhitenSignal(reshape(mysegs,[],1),[],1, AR);
+            mysegs = reshape(mysegs,sz);
+        end
+    end
+    params = struct('tapers',Tapers,'pad',1,'Fs',Fs/ResampleCoef,'fpass',FreqRange,'err',0,'trialave',Acc);
+    if Acc==1
+        [spec(:,:,ii),t,f]=mtspecgramc(mysegs,SpecWindowSmpls,params);%Tapers,1,Fs/ResampleCoef,FreqRange,0,1);
+    else
+        [spec(:,:,:,ii),t,f]=mtspecgramc(mysegs,SpecWindowSmpls,params);%Tapers,1,Fs/ResampleCoef,FreqRange,0,0);
+    end
+end
+t =t - nSamples/Fs/2;
+if nargout<1
+    figure
+    % matrix is t x f x ch - let's reshape it to make display stack of
+    % specgrams along freq. for all channels with common time
+    sz = size(spec);
+    Mat = reshape(spec,[sz(1) sz(2)*sz(3)]);
+    nf = sz(2)*sz(3);
+    
+    imagesc(t,[1:nf],Mat);
+
+end
+
