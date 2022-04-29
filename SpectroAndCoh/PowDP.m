@@ -10,7 +10,7 @@
 % FreqRange :: [1 150]
 % resampling :: to speed up computation is data is long enough, should be 2 or 10, use 1 for no resampling
 % SR :: from Sampling Rate
-% Channels :: channels to load if use 'FileBase mode'
+% Channels :: channels to load if use 'FileBase mode' 
 % LogPlot :: plot PDP in log 1, otherwise 0
 
 

@@ -1,4 +1,4 @@
-CTAL% function OutArgs=DetectRipples(FileBase,Channels, :: Threshold, Channelstest, maxmean, State);
+% function OutArgs=DetectRipples(FileBase,Channels, :: Threshold, Channelstest, maxmean, State);
 %
 % Channels :: Channels' Number(s) (+1)  with Ripples
 %  Threshold :: start with [5 2] up to [7 3]

@@ -48,7 +48,7 @@ end
 
 %select Peaks within OscPeriods
 WithinPeriods = WithinRanges(PowerPeaks, OscPeriods);
-PowerPeaks =  PowerPeaks(WithinPeriods);
+PowerPeaks =  PowerPeaks(logical(WithinPeriods));
 
 out.t = PowerPeaks;
 out.pow = amp(PowerPeaks);
@@ -61,7 +61,7 @@ out.len = diff(out.per,1,2)/SampleRate*1000;
 
 lm = LocalMinima(fx, 1, 0);
     
-out.troughs = lm(WithinRanges(lm, out.per));
+out.troughs = lm(logical(WithinRanges(lm, out.per)));
 
 
 %select Oscillaiton Periods that have Power Peak inside - WILL HAVE TO WAIT

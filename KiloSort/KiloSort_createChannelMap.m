@@ -3,7 +3,7 @@ function KiloSort_createChannelMap(chanMap, deadChan, SamplingRate, xcoords, yco
 % function KiloSort_createChannelMap(chanMap, deadChan, SamplingRate, xcoords, ycoords, kcoords)
 % 
 % chanMap = channels layout in row vector (base +1), even dead ones
-% deadChan = Dead channels : 'none' if all channels are ok, or indices of dead ones
+% deadChan = Dead channels : 'none' if all channels are ok, .
 % SamplingRate = sampling frequency
 % xcoord, ycoord =  define the horizontal (x) and vertical (y) coordinates of the channels in row vectors. For dead channels the values won't matter. 
 %                                These are in micrometer here, but the absolute scaling doesn't really matter in the algorithm. 

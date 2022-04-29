@@ -3,7 +3,7 @@
 % Rip.len = length is msec, Rip.pow - power of the ripple
 
 
-function Rips = DetectRipples(FileBase, varargin)
+function Rips = DetectRipples_original(FileBase, varargin)
 
 [Channels, FreqRange, State, Threshold,  Mode, Overwrite] = DefaultArgs(varargin,{[],[100 250], [], 5, 'long',1});
 if isempty(Channels)
